@@ -4,18 +4,11 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-<<<<<<< HEAD
 var passport = require('passport');
 var authenticate = require('./authenticate');
 
 var session = require('express-session');
 var FileStore = require('session-file-store')(session);
-=======
-var session = require('express-session');
-var FileStore = require('session-file-store')(session);
-
-
->>>>>>> a3b3a73ca31da1c47227aca3146c3975f398b8a5
 
 
 /*************************connection to the database  */
@@ -41,48 +34,8 @@ const promoRouter = require('./routes/promoRouter');
 const LeadersRouter = require('./routes/leadersRouter');
 var app = express();
 
-app.use(cookieParser('12345-67890-09876-54321'));
 
 
-
-
-
-app.use(session({
-  name: 'session-id',
-  secret: '12345-67890-09876-54321',
-  saveUninitialized: false,
-  resave: false,
-  store: new FileStore()
-}));
-
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-
-<<<<<<< HEAD
-
-=======
-function auth (req, res, next) {
-    console.log(req.session);
-
-  if(!req.session.user) {
-      var err = new Error('You are not authenticated!');
-      err.status = 403;
-      return next(err);
-  }
-  else {
-    if (req.session.user === 'authenticated') {
-      next();
-    }
-    else {
-      var err = new Error('You are not authenticated!');
-      err.status = 403;
-      return next(err);
-    }
-  }
-}
-
-app.use(auth);
->>>>>>> a3b3a73ca31da1c47227aca3146c3975f398b8a5
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -104,7 +57,6 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-<<<<<<< HEAD
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
@@ -125,8 +77,6 @@ app.use(auth);
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-=======
->>>>>>> a3b3a73ca31da1c47227aca3146c3975f398b8a5
 app.use('/dishes',dishRouter);
 app.use('/promotions',promoRouter);
 app.use('/leaders',LeadersRouter);
