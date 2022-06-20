@@ -133,6 +133,7 @@ dishRouter.route('/:dishId/comments/:commentId')
     .populate('comments.author')    
     .then((dish) => {
         if (dish != null && dish.comments.id(req.params.commentId) != null) {
+
             res.statusCode = 200;
             res.setHeader('Content-Type', 'application/json');
             res.json(dish.comments.id(req.params.commentId));
@@ -187,30 +188,40 @@ dishRouter.route('/:dishId/comments/:commentId')
 .delete( authenticate.verifyUser, (req, res, next) => {
     Dishes.findById(req.params.dishId)
     .then((dish) => {
-        if (dish != null && dish.comments.id(req.params.commentId) != null) {
+        console.log('user' +req.user._id)
+        console.log('comment '+dish.comments.id(req.params.commentId).author._id)
+        if(req.user._id=dish.comments.id(req.params.commentId).author._id){
+            if (dish != null && dish.comments.id(req.params.commentId) != null ){
 
-            dish.comments.id(req.params.commentId).remove();
-            dish.save()
-            .then((dish) => {
-                Dishes.findById(dish._id)
-                .populate('comments.author')
+                dish.comments.id(req.params.commentId).remove();
+                dish.save()
                 .then((dish) => {
-                    res.statusCode = 200;
-                    res.setHeader('Content-Type', 'application/json');
-                    res.json(dish);  
-                })               
-            }, (err) => next(err));
+                    Dishes.findById(dish._id)
+                    .populate('comments.author')
+                    .then((dish) => {
+                        res.statusCode = 200;
+                        res.setHeader('Content-Type', 'application/json');
+                        res.json(dish);  
+                    })               
+                }, (err) => next(err));
+            }
+            else if (dish == null) {
+                err = new Error('Dish ' + req.params.dishId + ' not found');
+                err.status = 404;
+                return next(err);
+            }
+            else {
+                err = new Error('Comment ' + req.params.commentId + ' not found');
+                err.status = 404;
+                return next(err);            
+            }
         }
-        else if (dish == null) {
-            err = new Error('Dish ' + req.params.dishId + ' not found');
+        else{
+            err =new Error('this is not your comment')
             err.status = 404;
-            return next(err);
+            return next(err);  
         }
-        else {
-            err = new Error('Comment ' + req.params.commentId + ' not found');
-            err.status = 404;
-            return next(err);            
-        }
+
     }, (err) => next(err))
     .catch((err) => next(err));
 });
