@@ -4,6 +4,11 @@
  * Module dependencies.
  */
 
+ var https = require('https');
+ var fs = require('fs');
+
+
+
 var app = require('../app');
 var debug = require('debug')('backend:server');
 var http = require('http');
@@ -14,6 +19,27 @@ var http = require('http');
 
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
+app.set('secPort',port+443);
+
+
+var options = {
+  key: fs.readFileSync(__dirname+'/private.key'),
+  cert: fs.readFileSync(__dirname+'/certificate.pem')
+};
+
+var secureServer = https.createServer(options,app);
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+secureServer.listen(app.get('secPort'), () => {
+   console.log('Server listening on port ',app.get('secPort'));
+});
+secureServer.on('error', onError);
+secureServer.on('listening', onListening);
+
+
 
 /**
  * Create HTTP server.
