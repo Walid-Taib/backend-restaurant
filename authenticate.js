@@ -39,3 +39,17 @@ exports.jwtPassport = passport.use(new JwtStrategy(opts,
     }));
 
 exports.verifyUser = passport.authenticate('jwt', {session: false});
+
+
+exports.verifyAdmin=(req,res,next)=>{
+    if(req.user.admin){
+        next()
+    }
+    else{
+        err = new Error('user' + req.user + ' cant do this operation');
+        err.status = 404;
+        return next(err);
+
+
+    }
+}
