@@ -10,6 +10,7 @@ var authenticate = require('./authenticate');
 var session = require('express-session');
 var FileStore = require('session-file-store')(session);
 var config = require('./config');
+const uploadRouter = require('./routes/uploadRouter');
 
 
 /*************************connection to the database  */
@@ -84,6 +85,7 @@ app.use(auth);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/imageUpload',uploadRouter);
 
 app.use('/dishes',dishRouter);
 app.use('/promotions',promoRouter);
