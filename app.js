@@ -10,7 +10,6 @@ var authenticate = require('./authenticate');
 var session = require('express-session');
 var FileStore = require('session-file-store')(session);
 var config = require('./config');
-const uploadRouter = require('./routes/uploadRouter');
 
 
 /*************************connection to the database  */
@@ -37,14 +36,7 @@ const LeadersRouter = require('./routes/leadersRouter');
 var app = express();
 
 
-app.all('*', (req, res, next) => {
-  if (req.secure) {
-    return next();
-  }
-  else {
-    res.redirect(307, 'https://' + req.hostname + ':' + app.get('secPort') + req.url);
-  }
-});
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -81,11 +73,9 @@ function auth (req, res, next) {
         next();
   }
 }
-app.use(auth);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/imageUpload',uploadRouter);
 
 app.use('/dishes',dishRouter);
 app.use('/promotions',promoRouter);
